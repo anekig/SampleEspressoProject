@@ -47,7 +47,7 @@ class AppTest : AbstractSwiftnotesTest() {
             deviceScreenshot("check_textHint")
         }
         step("Нажимаем в тулбаре \"Назад\"") {
-            noteScreen.tapBackButton()
+            noteScreen.toolbar.tapBackButton()
             deviceScreenshot("tap_backButton")
         }
         step("Проверяем диалог: текст \"Save changes?\" и кнопки \"No\", \"Yes\".") {
@@ -55,7 +55,7 @@ class AppTest : AbstractSwiftnotesTest() {
             deviceScreenshot("check_saveDialog")
         }
         step("Нажимаем \"No\"") {
-            noteScreen.tapConfirmNoButton()
+            noteScreen.confirmDialog.tapConfirmNoButton()
             deviceScreenshot("tap_noButton")
         }
         step("Проверяем открытие главного экрана") {
@@ -69,32 +69,27 @@ class AppTest : AbstractSwiftnotesTest() {
     fun saveNewNote() {
         rule.launchActivity()
         step("Тапаем на кнопку создания новой заметки") {
-            onView(withId(R.id.newNote)).perform(click())
+            mainScreen.tapCreateNoteButton()
             deviceScreenshot("tap_newNoteCreateButton")
         }
         step("Вводим текст в поля \"Title\" и \"Note\"") {
-            onView(withId(R.id.titleEdit)).perform(replaceText("Заметка 1"))
-            onView(withId(R.id.bodyEdit)).perform(replaceText("Новая"))
+            noteScreen.typeTitleAndBody()
             deviceScreenshot("enter_title&body")
         }
         step("Проверяем корректность введенного текста") {
-            onView(withId(R.id.titleEdit)).check(matches(withText("Заметка 1")))
-            onView(withId(R.id.bodyEdit)).check(matches(withText("Новая")))
+            noteScreen.checkTitleAndBody()
             deviceScreenshot("check_title&body")
         }
         step("Нажимаем в тулбаре \"Назад\"") {
-            onView(withClassName(endsWith("ImageButton"))).perform(click())
+            noteScreen.toolbar.tapBackButton()
             deviceScreenshot("tap_backButton")
         }
         step("Нажимаем \"Yes\"") {
-            onView(withResourceName("button1")).perform(click())
+            noteScreen.confirmDialog.tapConfirmYesButton()
             deviceScreenshot("tap_yesButton")
         }
         step("Проверяем появление новой записи на главном экране") {
-            onView(allOf(withText("Swiftnotes"))).check(matches(isDisplayed()))
-            onView(allOf(withId(R.id.titleView), isDisplayed())).check(matches(withText("Заметка 1")))
-            onView(allOf(withId(R.id.bodyView), isDisplayed())).check(matches(withText("Новая")))
-            deviceScreenshot("check_newNote")
+            mainScreen.checkNewNote()
         }
     }
 
@@ -103,27 +98,24 @@ class AppTest : AbstractSwiftnotesTest() {
     fun checkMenuPoints() {
         rule.launchActivity()
         step("Тапаем на \"Меню\"") {
-            onView(withContentDescription("Ещё")).perform(click())
+            mainScreen.toolbar.tapMenuButton()
             deviceScreenshot("tap_menu")
         }
         step("Проверяем отображение пунктов меню: \"Backup notes\", \"Restore notes\", \"Rate app\"") {
-            onView(allOf(withText("Backup notes"), isDisplayed()))
-            onView(allOf(withText("Restore notes"), isDisplayed()))
-            onView(allOf(withText("Rate app"), isDisplayed()))
+            mainScreen.checkMenuItems()
             deviceScreenshot("check_menuItems")
         }
         step("Тапаем на кнопку создания новой заметки") {
             onView(isRoot()).perform(pressBack())
-            onView(withId(R.id.newNote)).perform(click())
+            mainScreen.tapCreateNoteButton()
             deviceScreenshot("tap_newNoteCreateButton")
         }
         step("Тапаем на \"Меню\"") {
-            onView(withContentDescription("Ещё")).perform(click())
+            mainScreen.toolbar.tapMenuButton()
             deviceScreenshot("tap_menu")
         }
         step("Проверяем отображение пунктов меню: \"Note font size\", \"Hide note body in list\"") {
-            onView(withText("Note font size")).check(matches(isDisplayed()))
-            onView(withText("Hide note body in list")).check(matches(isDisplayed()))
+            noteScreen.checkMenuItems()
             deviceScreenshot("check_menuItems")
         }
     }
@@ -133,33 +125,31 @@ class AppTest : AbstractSwiftnotesTest() {
     fun deleteNewNote() {
         rule.launchActivity()
         step("Тапаем на кнопку создания новой заметки") {
-            onView(withId(R.id.newNote)).perform(click())
+            mainScreen.tapCreateNoteButton()
             deviceScreenshot("tap_newNoteCreateButton")
         }
         step("Вводим текст в поля \"Title\" и \"Note\"") {
-            onView(withId(R.id.titleEdit)).perform(replaceText("Заметка 1"))
-            onView(withId(R.id.bodyEdit)).perform(replaceText("Новая"))
+            noteScreen.typeTitleAndBody()
             deviceScreenshot("enter_title&body")
         }
         step("Нажимаем в тулбаре \"Назад\"") {
-            onView(withClassName(endsWith("ImageButton"))).perform(click())
+            noteScreen.toolbar.tapBackButton()
             deviceScreenshot("tap_backButton")
         }
         step("Нажимаем \"Yes\"") {
-            onView(withResourceName("button1")).perform(click())
+            noteScreen.confirmDialog.tapConfirmYesButton()
             deviceScreenshot("tap_yesButton")
         }
         step("Лонг тап на заметку") {
-            onView(withId(R.id.relativeLayout)).perform(longClick())
+            mainScreen.longTapNote()
             deviceScreenshot("longTap_note")
         }
         step("Нажимаем \"Удалить\"") {
-            onView(withContentDescription("Ещё")).perform(click())
-            onView(withResourceName("button1")).perform(click())
+            mainScreen.deleteNote()
             deviceScreenshot("tap_delete")
         }
         step("Проверяем удаление заметки") {
-            onView(withId(R.id.relativeLayout)).check(doesNotExist())
+            mainScreen.checkNoteDeletion()
             deviceScreenshot("check_deletion")
         }
     }
